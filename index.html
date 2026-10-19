@@ -8,4 +8,24 @@
 <section class="content screen" id="gains"><div class="heading"><h2>Mes gains</h2><span class="small">Démo</span></div><div class="statgrid"><div class="stat"><span class="small">Solde disponible</span><strong>0 FC</strong></div><div class="stat"><span class="small">Téléchargements</span><strong id="dlcount">0</strong></div></div><h3>Sources de revenus prévues</h3><div class="line"><span>Publicité</span><strong>Non connectée</strong></div><div class="line"><span>Contenus premium</span><strong>Non activés</strong></div><div class="line"><span>Retrait Orange Money</span><strong>À intégrer</strong></div><button class="btn blue" style="width:100%;margin-top:15px" onclick="toast('Les retraits seront activés après validation d’une intégration officielle compatible RDC.')">Configurer un retrait</button><p class="notice">Les chiffres affichés sont des valeurs de démonstration. Aucun revenu n’est actuellement généré ni transféré.</p></section>
 <nav class="nav"><button class="active" data-screen="home" onclick="show('home',this)"><span>⌂</span>Accueil</button><button data-screen="explore" onclick="show('explore',this)"><span>⌕</span>Explorer</button><button data-screen="create" onclick="show('create',this)"><span>✦</span>Créer</button><button data-screen="premium" onclick="show('premium',this)"><span>♛</span>Premium</button><button data-screen="gains" onclick="show('gains',this)"><span>▣</span>Mes gains</button></nav><div class="toast" id="toast"></div></main><script>
 let lastResult='';let downloads=0;function show(id,el){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));window.scrollTo({top:0,behavior:'smooth'})}function useIdea(s){document.getElementById('topic').value=s;show('create');}function generate(){const t=document.getElementById('topic').value.trim();if(!t){toast('Entre d’abord un sujet.');return}const kind=document.getElementById('kind').value;const tone=document.getElementById('tone').value;let hook='Et si on en parlait ?';if(tone.includes('professionnel'))hook='Un sujet important mérite une réflexion claire.';if(tone.includes('Humoristique'))hook='On connaît tous ce moment 😄';if(tone.includes('Éducatif'))hook='Voici une idée à retenir.';lastResult=hook+'\n\nAujourd’hui, parlons de : '+t+'.\n\nSelon toi, quel est le point le plus important à connaître sur ce sujet ? Partage ton avis dans les commentaires et échangeons dans le respect. 🇨🇩\n\n#RDC #TendanceRDC #Communauté\n\nFormat : '+kind;const r=document.getElementById('result');r.textContent=lastResult;r.hidden=false}async function copyResult(){if(!lastResult){toast('Génère d’abord un contenu.');return}try{await navigator.clipboard.writeText(lastResult);toast('Contenu copié.')}catch(e){toast('Copie indisponible dans cet aperçu : sélectionne le texte.')}}function downloadResult(){if(!lastResult){toast('Génère d’abord un contenu.');return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lastResult],{type:'text/plain;charset=utf-8'}));a.download='tendance-rdc-contenu.txt';a.click();URL.revokeObjectURL(a.href);downloads++;document.getElementById('dlcount').textContent=downloads;toast('Fichier préparé. Ce téléchargement ne génère pas de revenu dans la démo.')}function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display='none',2800)}document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#cards .card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(q)?'':'none')});document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');toast('Filtre de démonstration : '+c.textContent)}));
+
+const STORAGE_KEY = "tendance_rdc_creation";
+
+function sauvegarderCreation() {
+  const zone = document.getElementById("creationText");
+  if (zone) {
+    localStorage.setItem(STORAGE_KEY, zone.value);
+  }
+}
+
+function restaurerCreation() {
+  const zone = document.getElementById("creationText");
+  if (zone) {
+    zone.value = localStorage.getItem(STORAGE_KEY) || "";
+  }
+}
+
+document.getElementById("creationText")?.addEventListener("input", sauvegarderCreation);.addEventListener("DOMContentLoaded", 
+document.getElementById("creationText")?.addEventListener("input", sauvegarderCreation);
+  restaurerCreation();
 </script></body></html>
