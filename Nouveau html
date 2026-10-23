@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087443">
+<title>Tendance RDC — Découvre. Crée. Avance.</title>
+<style>
+:root{--g:#087443;--g2:#0b9154;--bg:#f3f7f4;--ink:#15291f;--line:#dfe9e2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Arial,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:760px;margin:auto;padding-bottom:85px}
+header{background:linear-gradient(135deg,#064b2d,#0b9154);color:white;padding:20px;border-radius:0 0 22px 22px}
+.brand{font-size:24px;font-weight:900}
+header p{margin:2px 0 15px;font-size:12px}
+.search{display:flex;gap:7px}
+.search input{flex:1;min-width:0;padding:12px;border:0;border-radius:10px}
+.search button{background:#f3c94f;color:#203525;border:0;border-radius:10px;padding:10px;font-weight:bold}
+main{padding:15px}
+.page{display:none}
+.page.active{display:block}
+.hero,.card,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}
+.hero{background:linear-gradient(135deg,#ddf5e5,#fff)}
+h1{font-size:26px;line-height:1.2;margin:8px 0}
+h2{font-size:21px;margin:5px 0 13px}
+h3{font-size:17px;margin:8px 0}
+p{overflow-wrap:anywhere}
+.small{font-size:12px;color:#637469}
+.btn{border:0;border-radius:10px;padding:11px 13px;background:var(--g);color:white;font-weight:750}
+.secondary{background:#e3f4e9;color:#075b35}
+.light{background:white;border:1px solid var(--line);color:var(--g)}
+.danger{background:#fff0ef;color:#a52828}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.category{background:white;border:1px solid var(--line);border-radius:13px;padding:13px 5px;font-weight:bold;color:var(--ink)}
+.category span{display:block;font-size:23px}
+label{display:block;font-weight:bold;font-size:13px;margin:12px 0 5px}
+input[type=text],input[type=search],input[type=url],textarea,select{width:100%;padding:12px;border:1px solid #d4e1d7;border-radius:10px;background:white;color:var(--ink)}
+textarea{min-height:120px;resize:vertical}
+.posthead{display:flex;gap:10px;align-items:center}
+.avatar{width:40px;height:40px;border-radius:50%;background:#ddf3e5;display:grid;place-items:center;font-weight:bold;color:var(--g)}
+.posthead div:nth-child(2){flex:1}
+.postbody{white-space:pre-wrap;overflow-wrap:anywhere}
+.actions{border-top:1px solid #edf1ee;padding-top:8px;margin-top:10px;display:flex;gap:5px;flex-wrap:wrap}
+.actions button{border:0;background:transparent;color:#45604e;padding:7px;font-size:12px}
+.notice{padding:12px;background:#edf6ef;border-radius:11px;font-size:12px;margin:12px 0}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:#ffffffef;border-top:1px solid var(--line);padding:8px 2px}
+.nav{border:0;background:transparent;color:#607167;font-size:10px;font-weight:bold;padding:5px 0}
+.nav span{display:block;font-size:20px}
+.nav.active{color:var(--g)}
+.empty{padding:22px;text-align:center;background:white;border:1px dashed #cbd8d0;border-radius:14px}
+.toast{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#183d29;color:white;padding:12px 16px;border-radius:10px;max-width:90%;z-index:10}
+.toast.show{display:block}
+@media(min-width:560px){main{padding:22px}.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">🇨🇩 Tendance RDC</div>
+  <p>Découvre. Crée. Avance.</p>
+  <div class="search">
+    <input id="searchInput" type="search" placeholder="Rechercher une publication...">
+    <button id="searchBtn">Chercher</button>
+  </div>
+</header>
+
+<main>
+<section id="home" class="page active">
+  <div class="hero">
+    <div class="small">LA COMMUNAUTÉ DES OPPORTUNITÉS</div>
+    <h1>Les idées congolaises méritent d’avancer.</h1>
+    <p>Découvre des idées, des opportunités, des actualités et des contenus de divertissement.</p>
+    <div class="row">
+      <button class="btn" data-go="explore">Explorer</button>
+      <button class="btn secondary" data-go="create">Créer une publication</button>
+    </div>
+  </div>
+  <h2>Explorer par rubrique</h2>
+  <div class="grid">
+    <button class="category" data-category="Emploi"><span>💼</span>Emploi</button>
+    <button class="category" data-category="Actualités"><span>📰</span>Actualités</button>
+    <button class="category" data-category="Business"><span>📈</span>Business</button>
+    <button class="category" data-category="Divertissement"><span>🎬</span>Divertissement</button>
+  </div>
+  <h2 style="margin-top:22px">Publications récentes</h2>
+  <div id="homeFeed"></div>
+  <div class="notice">⚠️ Vérifie toujours les offres et les personnes avant d’envoyer de l’argent. Une promesse de gain garanti peut être une arnaque.</div>
+</section>
+
+<section id="explore" class="page">
+  <h2>Explorer les publications</h2>
+  <label for="filterCategory">Choisir une rubrique</label>
+  <select id="filterCategory">
+    <option value="Toutes">Toutes les rubriques</option>
+    <option>Emploi</option><option>Actualités</option><option>Business</option>
+    <option>Divertissement</option><option>Éducation</option><option>Technologie</option><option>Services</option><option>Autre</option>
+  </select>
+  <div id="exploreFeed" style="margin-top:13px"></div>
+</section>
+
+<section id="create" class="page">
+  <h2>Créer une publication</h2>
+  <div class="panel">
+    <form id="createForm">
+      <label for="postTitle">Titre</label>
+      <input id="postTitle" type="text" maxlength="100" placeholder="Le titre de ta publication" required>
+      <label for="postCategory">Rubrique</label>
+      <select id="postCategory">
+        <option>Emploi</option><option>Actualités</option><option>Business</option>
+        <option>Divertissement</option><option>Éducation</option><option>Technologie</option><option>Services</option><option>Autre</option>
+      </select>
+      <label for="postBody">Contenu</label>
+      <textarea id="postBody" maxlength="5000" placeholder="Écris ton texte ici..." required></textarea>
+      <p class="small"><span id="charCount">0</span>/5000 caractères</p>
+      <label for="postAuthor">Nom de l’auteur</label>
+      <input id="postAuthor" type="text" maxlength="60" placeholder="Ton nom ou pseudo">
+      <label for="postCity">Ville</label>
+      <input id="postCity" type="text" maxlength="60" placeholder="Ex. Kinshasa">
+      <div class="row" style="margin-top:15px">
+        <button class="btn" type="submit">Publier sur cet appareil</button>
+        <button class="btn secondary" type="button" id="saveDraft">Enregistrer le brouillon</button>
+      </div>
+    </form>
+    <p class="small">Les publications sont enregistrées dans le navigateur de cet appareil. Elles ne sont pas encore envoyées à un serveur public.</p>
+  </div>
+</section>
+
+<section id="searchResults" class="page">
+  <h2>Résultats de recherche</h2>
+  <div id="resultsFeed"></div>
+</section>
+
+<section id="detail" class="page">
+  <button class="btn light" id="backBtn">← Retour</button>
+  <div id="detailContent" style="margin-top:12px"></div>
+</section>
+
+<section id="gains" class="page">
+  <h2>Mes gains</h2>
+  <div class="card">
+    <p class="small">Solde disponible</p>
+    <h1>0 FC</h1>
+    <p>Les revenus ne sont pas encore activés.</p>
+    <button class="btn" id="withdrawBtn">Configurer le retrait</button>
+    <div id="withdrawMessage" class="notice" hidden>Les retraits seront activés seulement après intégration et validation d’un prestataire officiel compatible avec la RDC. Aucun paiement n’est effectué actuellement.</div>
+  </div>
+  <div class="notice">Ne considère pas les vues, les likes ou les publications comme de l’argent gagné. Une intégration officielle et un modèle de revenus réel sont nécessaires.</div>
+</section>
+
+<section id="profile" class="page">
+  <h2>Mon profil</h2>
+  <div class="panel">
+    <label for="profileName">Nom ou pseudo</label>
+    <input id="profileName" type="text" maxlength="60" placeholder="Ton nom">
+    <label for="profileCity">Ville</label>
+    <input id="profileCity" type="text" maxlength="60" placeholder="Ta ville">
+    <button class="btn" id="saveProfile" style="margin-top:13px">Enregistrer mon profil</button>
+  </div>
+  <div class="panel">
+    <h3>Mes favoris</h3>
+    <div id="favoritesFeed"></div>
+  </div>
+  <div class="panel">
+    <h3>Sauvegarde des données</h3>
+    <p class="small">Télécharge une copie de tes publications pour éviter de les perdre.</p>
+    <div class="row">
+      <button class="btn secondary" id="exportBtn">Exporter mes données</button>
+      <label class="btn light" style="margin:0">Importer une sauvegarde<input id="importFile" type="file" accept=".json,application/json" style="display:block;max-width:100%;margin-top:8px"></label>
+    </div>
+    <p id="storageInfo" class="small"></p>
+  </div>
+</section>
+</main>
+
+<nav class="bottom">
+  <button class="nav active" data-go="home"><span>🏠</span>Accueil</button>
+  <button class="nav" data-go="explore"><span>🔎</span>Explorer</button>
+  <button class="nav" data-go="create"><span>✍️</span>Créer</button>
+  <button class="nav" data-go="gains"><span>💰</span>Mes gains</button>
+  <button class="nav" data-go="profile"><span>👤</span>Profil</button>
+</nav>
+<div id="toast" class="toast"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const KEY='tendanceRDC_v5_data';
+const DRAFT='tendanceRDC_v5_draft';
+let currentPage='home';
+let currentDetail=null;
+let state={posts:[],favorites:[],profile:{name:'',city:''},likes:[]};
+
+function safeRead(key,fallback){
+  try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}
+  catch(e){return fallback}
+}
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(state));
+    return true;
+  }catch(e){
+    toast('Sauvegarde impossible. Vérifie l’espace disponible.');
+    return false;
+  }
+}
+function esc(value){
+  return String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(message){
+  $('toast').textContent=message;
+  $('toast').classList.add('show');
+  setTimeout(()=>$('toast').classList.remove('show'),2500);
+}
+function go(page){
+  currentPage=page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===page));
+  document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.go===page));
+  if(page==='home')renderHome();
+  if(page==='explore')renderExplore();
+  if(page==='profile'){renderFavorites();loadProfile()}
+  window.scrollTo(0,0);
+}
+function dateLabel(date){
+  try{return new Date(date).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'})}
+  catch(e){return ''}
+}
+function postCard(p){
+  const liked=state.likes.includes(p.id);
+  const fav=state.favorites.includes(p.id);
+  return `<article class="card">
+    <div class="posthead"><div class="avatar">🇨🇩</div><div><strong>${esc(p.author||'Communauté RDC')}</strong><div class="small">${esc(p.city||'RDC')} · ${esc(dateLabel(p.date))}</div></div></div>
+    <p class="small">${esc(p.category)}</p>
+    <h3>${esc(p.title)}</h3>
+    <div class="postbody">${esc(p.body)}</div>
+    <div class="actions">
+      <button data-like="${esc(p.id)}">${liked?'❤️ Aimé':'🤍 J’aime'} (${Number(p.likes)||0})</button>
+      <button data-fav="${esc(p.id)}">${fav?'⭐ Favori':'☆ Ajouter aux favoris'}</button>
+      <button data-open="${esc(p.id)}">Lire</button>
+      <button data-share="${esc(p.id)}">Partager</button>
+      <button data-delete="${esc(p.id)}" class="danger">Supprimer</button>
+    </div>
+  </article>`;
+}
+function empty(message){
+  return `<div class="empty"><div style="font-size:30px">📭</div><h3>${esc(message)}</h3><p class="small">Crée une publication ou change de rubrique.</p><button class="btn secondary" data-go="create">Créer une publication</button></div>`;
+}
+function renderHome(){
+  const posts=[...state.posts].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  $('homeFeed').innerHTML=posts.length?posts.map(postCard).join(''):empty('Aucune publication pour le moment');
+}
+function renderExplore(){
+  const category=$('filterCategory').value;
+  const posts=[...state.posts].filter(p=>category==='Toutes'||p.category===category).sort((a,b)=>b.date.localeCompare(a.date));
+  $('exploreFeed').innerHTML=posts.length?posts.map(postCard).join(''):empty('Aucune publication dans cette rubrique');
+}
+function renderFavorites(){
+  const posts=state.posts.filter(p=>state.favorites.includes(p.id));
+  $('favoritesFeed').innerHTML=posts.length?posts.map(postCard).join(''): '<p class="small">Aucun favori pour le moment.</p>';
+}
+function loadProfile(){
+  $('profileName').value=state.profile.name||'';
+  $('profileCity').value=state.profile.city||'';
+}
+function renderDetail(id){
+  const p=state.posts.find(x=>x.id===id);
+  if(!p){toast('Publication introuvable.');return}
+  currentDetail=id;
+  $('detailContent').innerHTML=postCard(p);
+  go('detail');
+}
+function publish(){
+  const title=$('postTitle').value.trim();
+  const body=$('postBody').value.trim();
+  if(!title||!body){toast('Complète le titre et le contenu.');return}
+  const post={
+    id:'p'+Date.now()+Math.random().toString(36).slice(2,7),
+    title,body,category:$('postCategory').value,
+    author:$('postAuthor').value.trim()||state.profile.name||'Utilisateur',
+    city:$('postCity').value.trim()||state.profile.city||'RDC',
+    date:new Date().toISOString(),likes:0
+  };
+  state.posts.unshift(post);
+  if(save()){
+    $('createForm').reset();
+    $('charCount').textContent='0';
+    localStorage.removeItem(DRAFT);
+    toast('Publication enregistrée sur cet appareil.');
+    go('home');
+  }
+}
+function search(){
+  const q=$('searchInput').value.trim().toLocaleLowerCase('fr');
+  if(!q){toast('Écris un mot à rechercher.');return}
+  const results=state.posts.filter(p=>[p.title,p.body,p.category,p.author,p.city].some(v=>String(v||'').toLocaleLowerCase('fr').includes(q)));
+  $('resultsFeed').innerHTML=results.length?results.map(postCard).join(''):empty('Aucun résultat trouvé');
+  go('searchResults');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify({app:'Tendance RDC',version:5,state},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='sauvegarde-tendance-rdc.json';
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+  toast('Sauvegarde préparée.');
+}
+function restoreDraft(){
+  const d=safeRead(DRAFT,null);
+  if(!d)return;
+  $('postTitle').value=d.title||'';
+  $('postBody').value=d.body||'';
+  $('postCategory').value=d.category||'Emploi';
+  $('postAuthor').value=d.author||'';
+  $('postCity').value=d.city||'';
+  $('charCount').textContent=$('postBody').value.length;
+}
+function saveDraft(){
+  const draft={
+    title:$('postTitle').value,
+    body:$('postBody').value,
+    category:$('postCategory').value,
+    author:$('postAuthor').value,
+    city:$('postCity').value
+  };
+  try{localStorage.setItem(DRAFT,JSON.stringify(draft));toast('Brouillon enregistré.')}
+  catch(e){toast('Impossible de sauvegarder le brouillon.')}
+}
+function bind(){
+  document.addEventListener('click',e=>{
+    const goButton=e.target.closest('[data-go]');
+    if(goButton){go(goButton.dataset.go);return}
+    const cat=e.target.closest('[data-category]');
+    if(cat){$('filterCategory').value=cat.dataset.category;go('explore');return}
+    const like=e.target.closest('[data-like]');
+    if(like){
+      const p=state.posts.find(x=>x.id===like.dataset.like);
+      if(!p)return;
+      if(state.likes.includes(p.id)){
+        state.likes=state.likes.filter(id=>id!==p.id);
+        p.likes=Math.max(0,(Number(p.likes)||0)-1);
+      }else{
+        state.likes.push(p.id);p.likes=(Number(p.likes)||0)+1;
+      }
+      save();refreshFeeds();return;
+    }
+    const fav=e.target.closest('[data-fav]');
+    if(fav){
+      const id=fav.dataset.fav;
+      state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[...state.favorites,id];
+      save();refreshFeeds();renderFavorites();
+      toast(state.favorites.includes(id)?'Ajouté aux favoris.':'Retiré des favoris.');
+      return;
+    }
+    const open=e.target.closest('[data-open]');
+    if(open){renderDetail(open.dataset.open);return}
+    const del=e.target.closest('[data-delete]');
+    if(del){
+      if(confirm('Supprimer cette publication de cet appareil ?')){
+        const id=del.dataset.delete;
+        state.posts=state.posts.filter(p=>p.id!==id);
+        state.favorites=state.favorites.filter(x=>x!==id);
+        state.likes=state.likes.filter(x=>x!==id);
+        save();refreshFeeds();renderFavorites();
+        if(currentPage==='detail')go('explore');
+        toast('Publication supprimée.');
+      }
+      return;
+    }
+    const share=e.target.closest('[data-share]');
+    if(share){
+      const p=state.posts.find(x=>x.id===share.dataset.share);
+      if(!p)return;
+      const text=p.title+'\n\n'+p.body+'\n\n— Tendance RDC';
+      if(navigator.share){
+        navigator.share({title:p.title,text}).catch(()=>{});
+      }else if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(()=>toast('Texte copié.')).catch(()=>toast('Partage indisponible.'));
+      }else{
+        toast('Le partage n’est pas disponible dans ce navigateur.');
+      }
+    }
+  });
+  $('searchBtn').addEventListener('click',search);
+  $('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+  $('filterCategory').addEventListener('change',renderExplore);
+  $('createForm').addEventListener('submit',e=>{e.preventDefault();publish()});
+  $('postBody').addEventListener('input',()=>{
+    $('charCount').textContent=$('postBody').value.length;
+    saveDraft();
+  });
+  ['postTitle','postCategory','postAuthor','postCity'].forEach(id=>{
+    $(id).addEventListener('input',saveDraft);
+    $(id).addEventListener('change',saveDraft);
+  });
+  $('saveDraft').addEventListener('click',saveDraft);
+  $('backBtn').addEventListener('click',()=>go('explore'));
+  $('withdrawBtn').addEventListener('click',()=>$('withdrawMessage').hidden=false);
+  $('saveProfile').addEventListener('click',()=>{
+    state.profile={name:$('profileName').value.trim(),city:$('profileCity').value.trim()};
+    save();toast('Profil enregistré.');
+  });
+  $('exportBtn').addEventListener('click',exportData);
+  $('importFile').addEventListener('change',async e=>{
+    const file=e.target.files[0];if(!file)return;
+    try{
+      const data=JSON.parse(await file.text());
+      const incoming=data.state||data;
+      if(!Array.isArray(incoming.posts)||!confirm('Remplacer les données locales par cette sauvegarde ?'))return;
+      state={
+        posts:incoming.posts||[],
+        favorites:incoming.favorites||[],
+        profile:incoming.profile||{name:'',city:''},
+        likes:incoming.likes||[]
+      };
+      save();refreshFeeds();renderFavorites();loadProfile();
+      toast('Sauvegarde importée.');
+    }catch(err){toast('Fichier de sauvegarde invalide.')}
+    finally{e.target.value=''}
+  });
+}
+function refreshFeeds(){
+  renderHome();renderExplore();
+  if(currentDetail&&currentPage==='detail')renderDetail(currentDetail);
+}
+function load(){
+  const saved=safeRead(KEY,null);
+  if(saved&&Array.isArray(saved.posts)){
+    state={
+      posts:saved.posts||[],
+      favorites:saved.favorites||[],
+      profile:saved.profile||{name:'',city:''},
+      likes:saved.likes||[]
+    };
+  }
+  const old=safeRead('tendanceRDC_v3_data',null);
+  if(!saved&&old&&Array.isArray(old.posts)){
+    state.posts=old.posts.map(p=>({...p,likes:Number(p.likes)||0}));
+    state.favorites=old.saved||[];
+    state.profile=old.profile||{name:'',city:''};
+    save();
+  }
+}
+load();
+bind();
+restoreDraft();
+renderHome();
+renderExplore();
+loadProfile();
+})();
+</script>
+</body>
+</html>
